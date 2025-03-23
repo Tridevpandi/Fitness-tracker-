@@ -1,0 +1,71 @@
+mport json
+from datetime import datetime
+
+class FitnessTracker:
+    def _init_(self):
+        self.workouts = []
+        self.load_data()
+
+    def load_data(self):
+        try:
+            with open('workouts.json', 'r') as f:
+                self.workouts = json.load(f)
+        except FileNotFoundError:
+            self.workouts = []
+
+    def save_data(self):
+        with open('workouts.json', 'w') as f:
+            json.dump(self.workouts, f)
+
+    def log_workout(self, date, exercise, duration, calories):
+        workout = {
+            'date': date,
+            'exercise': exercise,
+            'duration': duration,
+            'calories': calories
+        }
+        self.workouts.append(workout)
+        self.save_data()
+        print("Workout logged successfully!")
+
+    def view_workouts(self):
+        if not self.workouts:
+            print("No workouts logged yet.")
+            return
+        for workout in self.workouts:
+            print(f"Date: {workout['date']}, Exercise: {workout['exercise']}, Duration: {workout['duration']} mins, Calories: {workout['calories']}")
+
+    def total_calories(self):
+        total = sum(workout['calories'] for workout in self.workouts)
+        print(f"Total calories burned: {total}")
+
+def main():
+    tracker = FitnessTracker()
+    
+    while True:
+        print("\nFitness Tracker")
+        print("1. Log a workout")
+        print("2. View workouts")
+        print("3. Total calories burned")
+        print("4. Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == '1':
+            date = input("Enter date (YYYY-MM-DD): ")
+            exercise = input("Enter exercise name: ")
+            duration = int(input("Enter duration in minutes: "))
+            calories = int(input("Enter calories burned: "))
+            tracker.log_workout(date, exercise, duration, calories)
+        elif choice == '2':
+            tracker.view_workouts()
+        elif choice == '3':
+            tracker.total_calories()
+        elif choice == '4':
+            print("Exiting the tracker. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if _name_ == "_main_":
+    main()
